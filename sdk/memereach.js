@@ -7,6 +7,8 @@
     var container = typeof config.container === "string" ? document.querySelector(config.container) : config.container;
     var sandbox = Boolean(config && config.sandbox);
     var currentAd = null;
+    var viewerKey = "anonymous";
+    try { var storageKey = "memereach-viewer-key"; viewerKey = localStorage.getItem(storageKey) || ("viewer_" + Math.random().toString(36).slice(2) + Date.now().toString(36)); localStorage.setItem(storageKey, viewerKey); } catch (_) {}
     function emit(eventType) {
       if (!currentAd || !endpoint) return Promise.resolve(null);
       var eventId = "mr_evt_" + Date.now() + "_" + Math.random().toString(36).slice(2);
@@ -25,7 +27,7 @@
     function request(context) {
       if (!endpoint || !placementId || !container) return Promise.resolve(null);
       var requestId = "mr_" + Date.now() + "_" + Math.random().toString(36).slice(2);
-      return fetch(endpoint + "/api/ad-request", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ placementId: placementId, publisherDomain: location.hostname, category: config.category || "crypto", context: context || "", sandbox: sandbox, requestId: requestId }) }).then(function (response) { return response.ok ? response.json() : null; }).then(function (payload) { if (payload && payload.ad) render(payload.ad); return payload && payload.ad ? payload.ad : null; }).catch(function () { return null; });
+      return fetch(endpoint + "/api/ad-request", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ placementId: placementId, publisherDomain: location.hostname, category: config.category || "crypto", context: context || "", viewerKey: viewerKey, sandbox: sandbox, requestId: requestId }) }).then(function (response) { return response.ok ? response.json() : null; }).then(function (payload) { if (payload && payload.ad) render(payload.ad); return payload && payload.ad ? payload.ad : null; }).catch(function () { return null; });
     }
     return { request: request, reportConversion: function () { return emit("conversion"); }, destroy: function () { if (container) container.innerHTML = ""; currentAd = null; } };
   }

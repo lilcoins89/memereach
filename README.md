@@ -60,3 +60,7 @@ MemeReach is advertising infrastructure and measurement, not a token launchpad, 
 ## Demo versus live Mainnet data
 
 The app header includes a reversible **Demo / Mainnet** switch. Demo remains the default for safe UI testing. Mainnet mode refreshes server-side Solana slot/block time and Helius token screening every 20 seconds from `/api/mainnet-status`; it does not write campaigns on-chain. Set `HELIUS_API_KEY` and optionally `SOLANA_RPC_URL` in the server environment for live provider data. See [`docs/live-data-mode.md`](docs/live-data-mode.md) for the exact credential and fallback behavior.
+
+## Revive-inspired delivery features
+
+Revive Adserver was cloned only to `/tmp` for feature inspection; it is not installed, bundled, or added as a dependency. MemeReach independently implements the useful off-chain behavior—placement linking, delivery limitations, frequency caps, daily caps, UTC dayparting, signed invocation events, and delivery accounting—in TypeScript and SQL. See [`docs/revive-feature-map.md`](docs/revive-feature-map.md).
