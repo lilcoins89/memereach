@@ -56,3 +56,7 @@ The included `Dockerfile` builds a standalone Next.js server and listens on `POR
 ## Policy boundary
 
 MemeReach is advertising infrastructure and measurement, not a token launchpad, trading venue, investment adviser, or guarantee of token performance. Campaigns must be clearly labeled Sponsored and may not use deceptive profit guarantees, fabricated endorsements, or impersonation. Contextual targeting is the default; the platform does not claim to know a visitor's wallet ownership, identity, holdings, or trading history without lawful basis and consent.
+
+## Demo versus live Mainnet data
+
+The app header includes a reversible **Demo / Mainnet** switch. Demo remains the default for safe UI testing. Mainnet mode refreshes server-side Solana slot/block time and Helius token screening every 20 seconds from `/api/mainnet-status`; it does not write campaigns on-chain. Set `HELIUS_API_KEY` and optionally `SOLANA_RPC_URL` in the server environment for live provider data. See [`docs/live-data-mode.md`](docs/live-data-mode.md) for the exact credential and fallback behavior.
