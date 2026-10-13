@@ -1,5 +1,6 @@
 import type { AdCreative, AdSet, AdSetAudience, Campaign, CreativeType, DeliveryRules, ScreeningStatus } from "@/lib/types";
 import { createCampaign, DEMO_ORG_ID } from "@/lib/db/store";
+import { getCampaign, listCampaigns } from "@/lib/db/store";
 
 export type CampaignWorkflowInput = { organizationId: string; name: string; objective: string; tokenName: string; tokenSymbol: string; mint: string; budget: number; bid: number; pricingModel: "CPC" | "CPM"; placements: string[]; description: string; startAt: string; endAt: string | null; deliveryRules?: DeliveryRules; riskScore: number | null; screeningStatus: ScreeningStatus; adSets: Array<{ name: string; audience: AdSetAudience; placements: string[]; budget: number; bid: number; pricingModel: "CPC" | "CPM"; startAt: string; endAt: string | null; ads: Array<{ name: string; type: CreativeType; headline: string; body: string; assetUrl: string | null; destinationUrl: string | null; tokenMint: string; tokenSymbol: string; disclosure: boolean }> }> };
 
@@ -14,3 +15,12 @@ export function createCampaignWorkflow(input: CampaignWorkflowInput) {
 }
 export function listAdSets(campaignId?: string) { return campaignId ? adSets.filter((set) => set.campaignId === campaignId) : adSets; }
 export function listAds(adSetId?: string) { return adSetId ? ads.filter((ad) => ad.adSetId === adSetId) : ads; }
+export function getWorkflowSnapshot(campaignId: string, organizationId = DEMO_ORG_ID) {
+  const campaign = getCampaign(campaignId, organizationId);
+  if (!campaign) return null;
+  const sets = listAdSets(campaignId);
+  return { campaign, adSets: sets, ads: sets.flatMap((set) => listAds(set.id)) };
+}
+export function listWorkflowSnapshots(organizationId = DEMO_ORG_ID) {
+  return listCampaigns(organizationId).map((campaign) => getWorkflowSnapshot(campaign.id, organizationId) || { campaign, adSets: [], ads: [] });
+}
