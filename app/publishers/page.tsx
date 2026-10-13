@@ -1,0 +1,14 @@
+import { Code2, Globe2, Plus, ShieldCheck } from "lucide-react";
+import { listPlacements } from "@/lib/db/store";
+import { PlacementTable } from "@/components/dashboard-widgets";
+
+export default function PublishersPage() { const placements = listPlacements(); return <main className="page"><div className="hero-row"><div><div className="eyebrow">Publisher network / inventory</div><h1>Buy trusted surfaces.</h1><p>Registered publisher domains, transparent floors, and safe fallbacks. Live delivery requires platform approval.</p></div><button className="btn btn-primary"><Plus style={{ width: 14 }}/> Add publisher</button></div><div className="metric-grid"><div className="metric-card"><div className="metric-label">Approved publishers</div><div className="metric-value">12</div><div className="metric-foot">Across 4 categories</div></div><div className="metric-card"><div className="metric-label">Eligible placements</div><div className="metric-value">38</div><div className="metric-foot">3.8M monthly impressions</div></div><div className="metric-card"><div className="metric-label">Estimated publisher earnings</div><div className="metric-value">$1,842</div><div className="metric-foot warn">$122 pending reconciliation</div></div><div className="metric-card"><div className="metric-label">SDK status</div><div className="metric-value" style={{ fontSize: 18 }}>sandbox ready</div><div className="metric-foot">No private keys in browser</div></div></div><div style={{ marginTop: 14 }}><PlacementTable placements={placements}/></div><div className="grid-2"><div className="panel"><div className="panel-head"><div className="panel-title">Publisher onboarding checklist</div><ShieldCheck style={{ width: 15, color: "var(--green)" }}/></div><div className="panel-body split-list">{[["Register organization", true], ["Verify domain ownership", true], ["Configure placement", false], ["Receive platform approval", false], ["Install publisher SDK", false]].map(([label, done]) => <div className="split-row" key={String(label)}><span>{done ? "✓" : "○"} {label as string}</span><b style={{ color: done ? "var(--green)" : "var(--muted)" }}>{done ? "complete" : "next"}</b></div>)}</div></div><div className="panel"><div className="panel-head"><div className="panel-title">SDK quick start</div><Code2 style={{ width: 15, color: "var(--violet)" }}/></div><div className="panel-body"><pre style={{ whiteSpace: "pre-wrap", color: "var(--soft)", font: "11px/1.7 var(--font-mono), monospace" }}>{`<script src="/sdk/memereach.js"></script>
+<div id="memereach-slot"></div>
+<script>
+  MemeReach.create({
+    endpoint: "https://your-memereach-origin",
+    placementId: "plc_signalwire",
+    container: "#memereach-slot",
+    sandbox: true
+  }).request("solana analytics");
+</script>`}</pre><p className="field-hint">Sandbox events are explicitly non-billable. The SDK no-ops when there is no eligible inventory.</p></div></div></div></main>; }

@@ -1,0 +1,12 @@
+import { describe, expect, it } from "vitest";
+import { issuePlacementToken, verifyPlacementToken } from "@/lib/security/tokens";
+import { selectCampaign } from "@/lib/engine/ad-engine";
+import { approveFunding, requestFunding } from "@/lib/db/finance";
+import type { AdRequest, Campaign } from "@/lib/types";
+
+const base: Campaign = { id: "cmp_controls", organizationId: "org-demo", name: "Controls", tokenName: "Controls", tokenSymbol: "CTRL", mint: "So11111111111111111111111111111111111111112", objective: "Token awareness", status: "approved", budget: 1000, spent: 10, bid: 2, pricingModel: "CPM", impressions: 100, clicks: 2, landingVisits: 2, createdAt: "", updatedAt: "", startAt: "2026-01-01T00:00:00.000Z", endAt: null, riskScore: 20, screeningStatus: "verified", placements: ["plc_controls"], allowedCategories: ["Solana ecosystem"], allowedDomains: ["example.com"], description: "A sufficiently descriptive test campaign." };
+const request: AdRequest = { placementId: "plc_controls", publisherDomain: "example.com", category: "Solana ecosystem", requestId: "req_controls_123" };
+
+describe("signed publisher context", () => { it("round-trips and rejects tampering", () => { const token = issuePlacementToken({ campaignId: "cmp_controls", placementId: "plc_controls", requestId: request.requestId, expiresAt: Date.now() + 10000 }); expect(verifyPlacementToken(token)?.campaignId).toBe("cmp_controls"); expect(verifyPlacementToken(`${token}x`)).toBeNull(); }); });
+describe("targeting and pacing", () => { it("filters by publisher context and schedule", () => { expect(selectCampaign(request, [base])?.campaign.id).toBe("cmp_controls"); expect(selectCampaign({ ...request, category: "gaming" }, [base])).toBeNull(); expect(selectCampaign({ ...request, publisherDomain: "other.com" }, [base])).toBeNull(); expect(selectCampaign(request, [{ ...base, startAt: "2099-01-01T00:00:00.000Z" }], new Date("2026-01-02"))).toBeNull(); }); });
+describe("funding idempotency", () => { it("does not create duplicate requests or approvals", () => { const key = `idem_${Date.now()}`; const first = requestFunding({ amountCents: 1000, reference: "TEST-REF", idempotencyKey: key }); expect(requestFunding({ amountCents: 2000, reference: "TEST-OTHER", idempotencyKey: key }).id).toBe(first.id); expect(approveFunding(key, "verified settlement").duplicate).toBe(false); expect(approveFunding(key, "verified settlement").duplicate).toBe(true); }); });

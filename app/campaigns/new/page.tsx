@@ -1,0 +1,3 @@
+import { CampaignWizard } from "@/components/campaign-wizard";
+
+export default function NewCampaignPage() { return <main className="page"><div className="hero-row"><div><div className="eyebrow">Campaign studio / new campaign</div><h1>Build the brief.</h1><p>Seven deliberate steps from objective to moderation. Drafting is wallet-optional and every off-chain decision is reviewable.</p></div><div className="signal-card" style={{ maxWidth: 260 }}><h3>Guardrails on</h3><p>Contextual targeting, disclosure checks, server-side budget validation, and a human moderation gate.</p></div></div><CampaignWizard/></main>; }
