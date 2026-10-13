@@ -2,6 +2,10 @@ export type CampaignStatus = "draft" | "pending_review" | "approved" | "rejected
 export type ScreeningStatus = "verified" | "unavailable" | "failed" | "stale";
 export type RiskLevel = "low" | "medium" | "high" | "unknown";
 export type DeliveryRules = { frequencyCapPerHour?: number; dailyImpressionCap?: number; allowedHoursUtc?: number[] };
+export type CreativeType = "token_image" | "token_video" | "token_text" | "website_link";
+export type AdSetAudience = { categories: string[]; domains: string[]; geoMarkets: string[]; contextualTerms: string[] };
+export type AdSet = { id: string; campaignId: string; name: string; audience: AdSetAudience; placements: string[]; budget: number; bid: number; pricingModel: "CPC" | "CPM"; startAt: string; endAt: string | null; status: "draft" | "active" | "paused" };
+export type AdCreative = { id: string; adSetId: string; name: string; type: CreativeType; headline: string; body: string; assetUrl: string | null; destinationUrl: string | null; tokenMint: string; tokenSymbol: string; disclosure: boolean; status: "draft" | "approved" | "rejected" };
 
 export type Campaign = {
   id: string;

@@ -64,3 +64,15 @@ The app header includes a reversible **Demo / Mainnet** switch. Demo remains the
 ## Revive-inspired delivery features
 
 Revive Adserver was cloned only to `/tmp` for feature inspection; it is not installed, bundled, or added as a dependency. MemeReach independently implements the useful off-chain behavior—placement linking, delivery limitations, frequency caps, daily caps, UTC dayparting, signed invocation events, and delivery accounting—in TypeScript and SQL. See [`docs/revive-feature-map.md`](docs/revive-feature-map.md).
+
+## Nested campaign workflow
+
+The campaign studio now follows:
+
+```text
+Campaign (objective + token identity)
+└── Ad Set (audience, contextual terms, geo markets, placements, budget, bid, schedule, delivery caps)
+    └── Ad (token image, token video, token text, or website token link)
+```
+
+Submission is validated server-side at `/api/workflow`, token-screened through the Solana adapter, and persisted in the demo workflow store. Production persistence is represented by `migrations/003_campaign_adset_ad.sql`; moderation remains required before delivery.
