@@ -1,0 +1,8 @@
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { listManagedPlacements, listPublisherAccounts, submitPublisherOnboarding } from "@/lib/db/publisher";
+import { canReadOrganization, getOrganizationId } from "@/lib/security/guards";
+
+const schema = z.object({ name: z.string().trim().min(2).max(80), website: z.string().url().max(240), domain: z.string().trim().min(4).max(160).regex(/^[a-z0-9.-]+$/i), category: z.string().trim().min(2).max(60), ownerWallet: z.string().min(32).max(44).nullable().optional(), placementName: z.string().trim().min(2).max(80), format: z.string().trim().min(2).max(50), dimensions: z.string().trim().min(2).max(50), floor: z.string().trim().min(2).max(40) });
+export async function GET(request: Request) { const organizationId = getOrganizationId(request); if (!canReadOrganization(organizationId)) return NextResponse.json({ error: "Organization access denied", code: "ORG_FORBIDDEN" }, { status: 403 }); return NextResponse.json({ publishers: listPublisherAccounts(organizationId), placements: listManagedPlacements() }); }
+export async function POST(request: Request) { const organizationId = getOrganizationId(request); if (!canReadOrganization(organizationId)) return NextResponse.json({ error: "Organization access denied", code: "ORG_FORBIDDEN" }, { status: 403 }); const parsed = schema.safeParse(await request.json()); if (!parsed.success) return NextResponse.json({ error: "Invalid publisher onboarding", code: "INVALID_ONBOARDING", details: parsed.error.flatten() }, { status: 400 }); return NextResponse.json({ submission: submitPublisherOnboarding(organizationId, parsed.data), moderation: "pending_review" }, { status: 201 }); }
