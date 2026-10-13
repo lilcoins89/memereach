@@ -80,3 +80,7 @@ Submission is validated server-side at `/api/workflow`, token-screened through t
 ## Campaign management
 
 `/campaigns` now lists every advertiser campaign with status, screening state, spend, Ad Set count, and Ad count. `/campaigns/:id` provides the nested inspection view for audience categories, contextual terms, domains, placements, budget, schedule, and each creative. `GET /api/workflow` returns organization-scoped workflow snapshots for future database-backed management screens.
+
+## Live Mainnet wallet funding and rewards
+
+Billing now supports a browser Solana wallet connection, live Mainnet SOL/token-account status, server-generated funding intents, wallet-signed SOL transfers, and server-side sender/recipient/amount verification. Token rewards expose a safe claim queue and remain explicitly unavailable until a protected reward mint, treasury, and payout worker are configured. See [`docs/live-wallet.md`](docs/live-wallet.md).
